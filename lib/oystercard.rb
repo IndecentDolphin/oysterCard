@@ -1,7 +1,9 @@
 class OysterCard
-
-    def balance
-        return 10.00
+    
+    attr_reader :balance
+    DEFAULT_BALANCE = 0.00
+    def initialize
+        @balance = DEFAULT_BALANCE
     end
 
 end
