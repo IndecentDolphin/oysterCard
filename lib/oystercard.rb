@@ -33,7 +33,7 @@ class OysterCard
     def in_journey?
         @card_state == true ? true : false
     end
-
+    private 
     def deduct(fare)
         @balance -= fare
     end

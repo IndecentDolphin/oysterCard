@@ -17,11 +17,6 @@ describe OysterCard do
         subject.top_up(90)
         expect {subject.top_up(1)}.to raise_exception "Max balance reached, balance: 90, balance limit: 90"
     end
-    
-    it "removes fare from card balance" do
-        subject.top_up(10)
-        expect(subject.deduct(3)).to eq(7)
-    end
 
     it "starts and ends a user journey" do
         subject.top_up(10)
@@ -35,5 +30,13 @@ describe OysterCard do
         expect{subject.touch_in}.to raise_exception "below minimum allowance"
     end
 
+    it "deducts the correct fare from balance" do
+        subject.top_up(10)
+        subject.touch_out
+        expect(subject.balance).to eq(7)
+    end
 
+    it "deducts the correct fare from balance" do
+        expect {subject.touch_out }.to change{subject.balance}.by -3
+    end
 end
