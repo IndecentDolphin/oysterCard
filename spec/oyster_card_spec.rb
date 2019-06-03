@@ -24,10 +24,16 @@ describe OysterCard do
     end
 
     it "starts and ends a user journey" do
+        subject.top_up(10)
         subject.touch_in 
         expect(subject).to be_in_journey
         subject.touch_out
         expect(subject).not_to be_in_journey
     end
+
+    it "validates a minimum amount for a journey" do
+        expect{subject.touch_in}.to raise_exception "below minimum allowance"
+    end
+
 
 end
