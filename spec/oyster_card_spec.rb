@@ -1,6 +1,7 @@
 require "oystercard.rb"
 
 describe OysterCard do
+    let(:station){ double :station }
 
     it "Checks balance of oyster card" do
         expect(subject.balance).to eq(0.00)
@@ -20,14 +21,14 @@ describe OysterCard do
 
     it "starts and ends a user journey" do
         subject.top_up(10)
-        subject.touch_in 
+        subject.touch_in(station)
         expect(subject).to be_in_journey
         subject.touch_out
         expect(subject).not_to be_in_journey
     end
 
     it "validates a minimum amount for a journey" do
-        expect{subject.touch_in}.to raise_exception "below minimum allowance"
+        expect{subject.touch_in(station)}.to raise_exception "below minimum allowance"
     end
 
     it "deducts the correct fare from balance" do
@@ -38,5 +39,12 @@ describe OysterCard do
 
     it "deducts the correct fare from balance" do
         expect {subject.touch_out }.to change{subject.balance}.by -3
+    end
+
+  
+    it "stores the station the card was topped up in" do
+        subject.top_up(10)
+        subject.touch_in(station)
+        expect(subject.start_station).to eq(station)
     end
 end
