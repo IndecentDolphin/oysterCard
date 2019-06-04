@@ -3,6 +3,7 @@ require "oystercard.rb"
 describe OysterCard do
     #variables
     let(:station){ double :station }
+    let(:setup_journey) {subject.top_up(10); subject.touch_in(station); subject.touch_out(station)}
 
     it "Checks balance of oyster card" do
         expect(subject.balance).to eq(0.00)
@@ -24,7 +25,7 @@ describe OysterCard do
         subject.top_up(10)
         subject.touch_in(station)
         expect(subject).to be_in_journey
-        subject.touch_out
+        subject.touch_out(station)
         expect(subject).not_to be_in_journey
     end
 
@@ -34,12 +35,12 @@ describe OysterCard do
 
     it "deducts the correct fare from balance" do
         subject.top_up(10)
-        subject.touch_out
+        subject.touch_out(station)
         expect(subject.balance).to eq(7)
     end
 
     it "deducts the correct fare from balance" do
-        expect {subject.touch_out }.to change{subject.balance}.by -3
+        expect {subject.touch_out(station) }.to change{subject.balance}.by -3
     end
 
   
@@ -52,7 +53,16 @@ describe OysterCard do
     it "removes the start_station value when tapping out" do
         subject.top_up(10)
         subject.touch_in(station)
-        subject.touch_out
+        subject.touch_out(station)
         expect(subject.start_station).to eq(nil) 
+    end
+    
+    it "checks that a new card has no journeys listed" do
+        expect(subject.journey_list).to be_empty
+    end
+
+    it "creates a history hash which contains 1 journey" do
+        setup_journey
+        expect(subject.journey_list).to eq({:journey_1 => [station, station]})
     end
 end
