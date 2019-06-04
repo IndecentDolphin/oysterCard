@@ -1,6 +1,7 @@
 require "oystercard.rb"
 
 describe OysterCard do
+    #variables
     let(:station){ double :station }
 
     it "Checks balance of oyster card" do
@@ -46,5 +47,12 @@ describe OysterCard do
         subject.top_up(10)
         subject.touch_in(station)
         expect(subject.start_station).to eq(station)
+    end
+
+    it "removes the start_station value when tapping out" do
+        subject.top_up(10)
+        subject.touch_in(station)
+        subject.touch_out
+        expect(subject.start_station).to eq(nil) 
     end
 end
