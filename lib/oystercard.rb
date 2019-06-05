@@ -1,17 +1,17 @@
 class OysterCard
     
-    attr_reader :balance, :start_station, :journey_list, :current_journey
+    attr_reader :balance, :journey_list, :current_journey
 
     # constants
     DEFAULT_BALANCE = 0
     MAX_LIMIT = 90
     MINIMUM_BALANCE = 1
     MINIMUM_FARE = 3
+    PENALTY_CHARGE = 5
     
 
     def initialize
         @balance = DEFAULT_BALANCE
-        @start_station
         @journey_list = {}
         @current_journey = []
         @journey_number = 0
@@ -25,18 +25,23 @@ class OysterCard
 
     def touch_in(station)
         raise "below minimum allowance" if balance < MINIMUM_BALANCE
-        @start_station = station
+        # deduct(PENALTY_CHARGE) if @current_journey.length == 1
+
+        if @current_journey.length == 1
+            deduct(PENALTY_CHARGE)
+            store("INCOMPLETE_JOURNEY")
+        end
+
         store(station)
     end
 
     def touch_out(station)
         deduct(MINIMUM_FARE)
-        @start_station = nil
         store(station)
     end
 
     def in_journey?
-        !!@start_station
+        !@current_journey.empty?
     end
 
     def store(input)

@@ -34,8 +34,7 @@ describe OysterCard do
     end
 
     it "deducts the correct fare from balance" do
-        subject.top_up(10)
-        subject.touch_out(station)
+        setup_journey
         expect(subject.balance).to eq(7)
     end
 
@@ -47,14 +46,7 @@ describe OysterCard do
     it "stores the station the card was topped up in" do
         subject.top_up(10)
         subject.touch_in(station)
-        expect(subject.start_station).to eq(station)
-    end
-
-    it "removes the start_station value when tapping out" do
-        subject.top_up(10)
-        subject.touch_in(station)
-        subject.touch_out(station)
-        expect(subject.start_station).to eq(nil) 
+        expect(subject.current_journey).to eq([station])
     end
     
     it "checks that a new card has no journeys listed" do
@@ -64,5 +56,22 @@ describe OysterCard do
     it "creates a history hash which contains 1 journey" do
         setup_journey
         expect(subject.journey_list).to eq({:journey_1 => [station, station]})
+    end
+
+    # In order to be charged correctly
+    # As a customer
+    # I need a penalty charge deducted if I fail to touch in or out
+
+    # User tops up card
+    # User touches in at start station
+    # User misses touching out at exit station
+    # User touches in at start station_2
+    # User receives penalty charge\
+
+    it "deducts a penalty charge if a journey is left incomplete and a new journey is started" do
+        subject.top_up(10)
+        subject.touch_in(station)
+        subject.touch_in("New Cross")
+        expect(subject.balance).to eq(5)
     end
 end
